@@ -1,4 +1,4 @@
-//Academy
+п»ї//Academy
 #include <iostream>
 using std::cin;
 using std::cout;
@@ -66,8 +66,8 @@ class Student :public Human
 {
 	std::string speciality;
 	std::string group;
-	double rating; //успеваемость
-	double attendance; //посещаемость
+	double rating; //СѓСЃРїРµРІР°РµРјРѕСЃС‚СЊ
+	double attendance; //РїРѕСЃРµС‰Р°РµРјРѕСЃС‚СЊ
 
 public:
 	const std::string& get_speciality()const
