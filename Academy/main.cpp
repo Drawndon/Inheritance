@@ -4,6 +4,8 @@ using std::cin;
 using std::cout;
 using std::endl;
 
+#define delimiter "\n-------------------------------------------------------------\n"
+
 #define HUMAN_TAKE_PARAMETERS const std::string& last_name, const std::string& first_name, int age
 #define HUMAN_GIVE_PARAMETERS last_name, first_name, age
 
@@ -47,12 +49,12 @@ public:
 		set_age(age);
 		cout << "HConstructor:\t" << this << endl;
 	}
-	~Human()
+	virtual ~Human()
 	{
 		cout << "HDestructor:\t" << this << endl;
 	}
 	//				Methods
-	void info()const
+	virtual void info()const //Base class
 	{
 		cout << last_name << " " << first_name << " " << age << endl;
 	}
@@ -118,7 +120,7 @@ public:
 	}
 
 	//				Methods
-	void info()const
+	void info()const override //Derived Class
 	{
 		Human::info();
 		cout << speciality << " " << group << " " << rating << " " << attendance << endl;
@@ -162,7 +164,7 @@ public:
 	{
 		cout << "TDestructor:\t" << this << endl;
 	}
-	void info()const
+	void info()const override //Derived Class
 	{
 		Human::info();
 		cout << speciality << " " << experience << endl;
@@ -227,17 +229,21 @@ public:
 		cout << "GDestructor:\t" << this << endl;
 	}
 	//					Methods
-	void info()const
+	void info()const override //Derived Class
 	{
 		Student::info();
 		cout << supervisor << " " << topic << " " << grade << " " << subject << endl;
 	}
 };
 
+
+//#define INHERITANCE
+#define POLYMORPHISM
 void main()
 {
 	setlocale(LC_ALL, "");
 
+#ifdef INHERITANCE
 	Human human("Montana", "Antonio", 25);
 	human.info();
 
@@ -249,4 +255,29 @@ void main()
 
 	Graduate graduate("Arny", "GuessWhat", 22, "Physics", "BB", 99, 99, "IronMan", "Sentinel", "Bachelor", "Physics");
 	graduate.info();
+#endif // INHERITANCE
+
+#ifdef POLYMORPHISM
+	Human* group[] =
+	{
+		new Student("Pinkman", "Jessie", 22, "Chemistry", "WW_220", 95, 98),
+		new Teacher("White", "Walter", 50, "Chemistry", 25),
+		new Graduate("Arny", "GuessWhat", 22, "Physics", "BB", 99, 99, "IronMan", "Sentinel", "Bachelor", "Physics"),
+		new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 98, 99),
+		new Teacher("Diaz", "Ricardo", 50, "Weapons distribution", 20)
+	};
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		group[i]->info();
+		cout << delimiter << endl;
+	}
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		delete group[i];
+		cout << delimiter << endl;
+	}
+#endif // POLYMORPHISM
+
+
 }
+
