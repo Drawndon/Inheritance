@@ -169,14 +169,15 @@ public:
 	}
 };
 
-#define GRADUATE_TAKE_PARAMETERS const std::string & supervisor, const std::string& topic, const std::string& grade
-#define GRADUATE_GIVE_PARAMETERS supervisor, topic, grade
+#define GRADUATE_TAKE_PARAMETERS const std::string & supervisor, const std::string& topic, const std::string& grade, const std::string& subject
+#define GRADUATE_GIVE_PARAMETERS supervisor, topic, grade, subject
 
 class Graduate :public Student
 {
 	std::string supervisor;
 	std::string topic;
 	std::string grade;
+	std::string subject;
 public:
 	const std::string& get_supervisor()const
 	{
@@ -190,6 +191,10 @@ public:
 	{
 		return grade;
 	}
+	const std::string& get_subject() const
+	{
+		return subject;
+	}
 	void set_supervisor(const std::string& supervisor)
 	{
 		this->supervisor = supervisor;
@@ -202,14 +207,19 @@ public:
 	{
 		this->grade = grade;
 	}
+	void set_subject(const std::string& subject)
+	{
+		this->subject = subject;
+	}
 
 	//					Constructors
-	Graduate(HUMAN_TAKE_PARAMETERS, STUDENT_TAKE_PARAMETERS, GRADUATE_TAKE_PARAMETERS):
-		Student(HUMAN_GIVE_PARAMETERS, STUDENT_GIVE_PARAMETERS)
+	Graduate(HUMAN_TAKE_PARAMETERS, STUDENT_TAKE_PARAMETERS, GRADUATE_TAKE_PARAMETERS)
+		:Student(HUMAN_GIVE_PARAMETERS, STUDENT_GIVE_PARAMETERS)
 	{
 		set_supervisor(supervisor);
 		set_topic(topic);
 		set_grade(grade);
+		set_subject(subject);
 		cout << "GConstructor:\t" << this << endl;
 	}
 	~Graduate()
@@ -217,10 +227,10 @@ public:
 		cout << "GDestructor:\t" << this << endl;
 	}
 	//					Methods
-	void print()const
+	void info()const
 	{
 		Student::info();
-		cout << supervisor << " " << topic << " " << grade << endl;
+		cout << supervisor << " " << topic << " " << grade << " " << subject << endl;
 	}
 };
 
@@ -237,6 +247,6 @@ void main()
 	Teacher teacher("White", "Walter", 50, "Chemistry", 25);
 	teacher.info();
 
-	Graduate graduate("Arny", "GuessWhat", 22, "Physics", "BB", 99, 99, "IronMan", "Sentinel", "Bachelor");
+	Graduate graduate("Arny", "GuessWhat", 22, "Physics", "BB", 99, 99, "IronMan", "Sentinel", "Bachelor", "Physics");
 	graduate.info();
 }
