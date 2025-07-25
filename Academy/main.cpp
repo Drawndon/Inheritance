@@ -55,15 +55,15 @@ public:
 		cout << "HDestructor:\t" << this << endl;
 	}
 	//				Methods
-	virtual void info()const //Base class
+	virtual std::ostream& info(std::ostream& os)const //Base class
 	{
-		cout << last_name << " " << first_name << " " << age << endl;
+		return os << last_name << " " << first_name << " " << age;
 	}
 };
 
 std::ostream& operator << (std::ostream & os, const Human & obj)
 {
-	return os << obj.get_last_name() << " " << obj.get_first_name() << " " << obj.get_age();
+	return obj.info(os);
 }
 
 #define STUDENT_TAKE_PARAMETERS const std::string& speciality, const std::string& group, double rating, double attendance
@@ -126,10 +126,9 @@ public:
 	}
 
 	//				Methods
-	void info()const override //Derived Class
+	std::ostream& info(std::ostream& os)const override //Derived Class
 	{
-		Human::info();
-		cout << speciality << " " << group << " " << rating << " " << attendance << endl;
+		return Human::info(os) << " " << speciality << " " << group << " " << rating << " " << attendance;
 	}
 
 };
@@ -170,10 +169,9 @@ public:
 	{
 		cout << "TDestructor:\t" << this << endl;
 	}
-	void info()const override //Derived Class
+	std::ostream& info(std::ostream& os)const override //Derived Class
 	{
-		Human::info();
-		cout << speciality << " " << experience << endl;
+		return Human::info(os) << " " << speciality << " " << experience;
 	}
 };
 
@@ -235,10 +233,9 @@ public:
 		cout << "GDestructor:\t" << this << endl;
 	}
 	//					Methods
-	void info()const override //Derived Class
+	std::ostream& info(std::ostream& os)const override //Derived Class
 	{
-		Student::info();
-		cout << supervisor << " " << topic << " " << grade << " " << subject << endl;
+		return Student::info(os) << " " << supervisor << " " << topic << " " << grade << " " << subject;
 	}
 };
 
@@ -276,7 +273,7 @@ void main()
 	std::ofstream fout("group.txt");
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
-		group[i]->info();
+		group[i]->info(cout);
 		fout << *group[i] << endl;
 		cout << delimiter << endl;
 	}

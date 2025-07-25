@@ -1,5 +1,5 @@
-Pinkman Jessie 22
-White Walter 50
-Arny GuessWhat 22
-Vercetty Tommy 30
-Diaz Ricardo 50
+Pinkman Jessie 22 Chemistry WW_220 95 98
+White Walter 50 Chemistry 25
+Arny GuessWhat 22 Physics BB 99 99 IronMan Sentinel Bachelor Physics
+Vercetty Tommy 30 Theft Vice 98 99
+Diaz Ricardo 50 Weapons distribution 20
