@@ -61,7 +61,7 @@ public:
 	}
 };
 
-std::ostream& operator << (std::ostream & os, const Human & obj)
+std::ostream& operator<<(std::ostream & os, const Human & obj)
 {
 	return os << obj.get_last_name() << " " << obj.get_first_name() << " " << obj.get_age();
 }
@@ -134,6 +134,12 @@ public:
 
 };
 
+std::ostream& operator<<(std::ostream& os, const Student& obj)
+{
+	os << (Human&)obj; //Upcast
+	return os << obj.get_speciality() << " " << obj.get_group() << " " << obj.get_rating() << " " << obj.get_attendance();
+}
+
 #define TEACHER_TAKE_PARAMETERS const std::string & speciality, int experience
 #define TEACHER_GIVE_PARAMETERS speciality, experience
 
@@ -176,6 +182,12 @@ public:
 		cout << speciality << " " << experience << endl;
 	}
 };
+
+std::ostream& operator<<(std::ostream& os, const Teacher& obj)
+{
+
+	return os << (Human&)obj << " " << obj.get_speciality() << " " << obj.get_experience();
+}
 
 #define GRADUATE_TAKE_PARAMETERS const std::string & supervisor, const std::string& topic, const std::string& grade, const std::string& subject
 #define GRADUATE_GIVE_PARAMETERS supervisor, topic, grade, subject
@@ -242,6 +254,11 @@ public:
 	}
 };
 
+std::ostream& operator<<(std::ostream& os, const Graduate& obj)
+{
+	return os << (Student&)obj << " " << obj.get_supervisor() << " " << obj.get_subject() << " " << obj.get_topic() << obj.get_grade();
+}
+
 
 //#define INHERITANCE
 #define POLYMORPHISM
@@ -277,11 +294,17 @@ void main()
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
 		group[i]->info();
-		fout << *group[i] << endl;
+		cout << typeid(*group[i]).name() << endl;
+		if (typeid(*group[i]) == typeid(Human)) fout << *group[i] << endl;
+		//Manual Downcast:
+		if (typeid(*group[i]) == typeid(Student)) fout << *dynamic_cast<Student*>(group[i]) << endl;
+		if (typeid(*group[i]) == typeid(Teacher)) fout << *dynamic_cast<Teacher*>(group[i]) << endl;
+		if (typeid(*group[i]) == typeid(Graduate)) fout << *dynamic_cast<Graduate*>(group[i]) << endl;
+		//fout << *group[i] << endl;
 		cout << delimiter << endl;
 	}
 	fout.close();
-	system("notepad group.txt");
+	system("start notepad group.txt");
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
 		delete group[i];
