@@ -1,6 +1,7 @@
 ﻿//Academy
 #include <iostream>
 #include<fstream>
+#include<string>
 using std::cin;
 using std::cout;
 using std::endl;
@@ -57,7 +58,7 @@ public:
 	//				Methods
 	virtual std::ostream& info(std::ostream& os)const //Base class
 	{
-		return os << last_name << " " << first_name << " " << age;
+		return os << last_name << "," << first_name << "," << age;
 	}
 };
 
@@ -128,7 +129,7 @@ public:
 	//				Methods
 	std::ostream& info(std::ostream& os)const override //Derived Class
 	{
-		return Human::info(os) << " " << speciality << " " << group << " " << rating << " " << attendance;
+		return Human::info(os) << "," << speciality << "," << group << "," << rating << "," << attendance;
 	}
 
 };
@@ -171,7 +172,7 @@ public:
 	}
 	std::ostream& info(std::ostream& os)const override //Derived Class
 	{
-		return Human::info(os) << " " << speciality << " " << experience;
+		return Human::info(os) << "," << speciality << "," << experience;
 	}
 };
 
@@ -235,13 +236,14 @@ public:
 	//					Methods
 	std::ostream& info(std::ostream& os)const override //Derived Class
 	{
-		return Student::info(os) << " " << supervisor << " " << topic << " " << grade << " " << subject;
+		return Student::info(os) << "," << supervisor << "," << topic << "," << grade << "," << subject;
 	}
 };
 
 
 //#define INHERITANCE
-#define POLYMORPHISM
+//#define POLYMORPHISM
+#define READ_FROM_FILE
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -270,7 +272,7 @@ void main()
 		new Teacher("Diaz", "Ricardo", 50, "Weapons distribution", 20)
 	};
 
-	std::ofstream fout("group.txt");
+	std::ofstream fout("group.csv");
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
 		group[i]->info(cout);
@@ -278,13 +280,79 @@ void main()
 		cout << delimiter << endl;
 	}
 	fout.close();
-	system("notepad group.txt");
+	system("start notepad group.csv");
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
 		delete group[i];
 		cout << delimiter << endl;
 	}
 #endif // POLYMORPHISM
+
+
+#ifdef READ_FROM_FILE
+	std::ifstream fin("group.csv");
+	const int G_SIZE = 15;
+	int count_el = 0;
+	Human* group[G_SIZE] = {};
+
+	if (fin.is_open())
+	{
+		while (!fin.eof())
+		{
+
+			const int T_SIZE = 16;
+			const int B_SIZE = 256;
+			char* tokens[T_SIZE] = {};
+			char* context = NULL;
+			int count_token = 0;
+			char buffer[B_SIZE] = {};
+			char* ps;
+			fin.getline(buffer, B_SIZE);
+			ps = strtok_s(buffer, ",", &context);
+			while (ps)
+			{
+				tokens[count_token++] = ps;
+				ps = strtok_s(NULL, ",", &context);
+			}
+
+			switch (count_token)
+			{
+			case 3: group[count_el++] = new Human(tokens[0], tokens[1], atoi(tokens[2]));
+				break;
+			case 5: group[count_el++] = new Teacher(tokens[0], tokens[1], atoi(tokens[2]), tokens[3], atoi(tokens[4]));
+				break;
+			case 7: group[count_el++] = new Student(tokens[0], tokens[1], atoi(tokens[2]), tokens[3], tokens[4],
+				atof(tokens[5]), atof(tokens[6]));
+				break;
+			case 11: group[count_el++] = new Graduate(tokens[0], tokens[1], atoi(tokens[2]), tokens[3], tokens[4],
+				atof(tokens[5]), atof(tokens[6]), tokens[7], tokens[8], tokens[9], tokens[10]);
+				break;
+
+			}
+		}
+	}
+	else
+	{
+		std::cerr << "Error: file not found" << endl;
+	}
+	fin.close();
+
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		if (group[i] != nullptr)
+		{
+			group[i]->info(cout);
+			cout << delimiter << endl;
+		}
+	}
+
+	for (int i = 0; i < count_el; i++)
+	{
+		delete group[i];
+	}
+
+
+#endif // READ_FROM_FILE
 
 
 }
