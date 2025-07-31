@@ -60,6 +60,11 @@ public:
 	{
 		return os << last_name << "," << first_name << "," << age;
 	}
+
+	virtual void print()const
+	{
+		cout << last_name << " " << first_name << " " << age;
+	}
 };
 
 std::ostream& operator << (std::ostream & os, const Human & obj)
@@ -132,6 +137,12 @@ public:
 		return Human::info(os) << "," << speciality << "," << group << "," << rating << "," << attendance;
 	}
 
+	void print()const override
+	{
+		Human::print();
+		cout << " " << speciality << " " << group << " " << rating << " " << attendance;
+	}
+
 };
 
 #define TEACHER_TAKE_PARAMETERS const std::string & speciality, int experience
@@ -173,6 +184,12 @@ public:
 	std::ostream& info(std::ostream& os)const override //Derived Class
 	{
 		return Human::info(os) << "," << speciality << "," << experience;
+	}
+
+	void print()const override
+	{
+		Human::print();
+		cout << " " << speciality << " " << experience;
 	}
 };
 
@@ -237,6 +254,12 @@ public:
 	std::ostream& info(std::ostream& os)const override //Derived Class
 	{
 		return Student::info(os) << "," << supervisor << "," << topic << "," << grade << "," << subject;
+	}
+
+	void print()const override
+	{
+		Student::print();
+		cout << " " << supervisor << " " << topic << " " << grade << " " << subject;
 	}
 };
 
@@ -341,7 +364,7 @@ void main()
 	{
 		if (group[i] != nullptr)
 		{
-			group[i]->info(cout);
+			group[i]->print();
 			cout << delimiter << endl;
 		}
 	}
