@@ -13,10 +13,19 @@ using std::endl;
 
 class Human
 {
+	static const int TYPE_WIDTH = 12;
+	static const int NAME_WIDTH = 12;
+	static const int AGE_WIDTH = 5;
+	static int count; //Объявление статической переменной
 	std::string last_name;
 	std::string first_name;
 	int age;
 public:
+	static int get_count()
+	{
+		return count;
+	}
+
 	const std::string& get_last_name()const
 	{
 		return last_name;
@@ -49,16 +58,30 @@ public:
 		set_last_name(last_name);
 		set_first_name(first_name);
 		set_age(age);
+		count++;
 		cout << "HConstructor:\t" << this << endl;
 	}
 	virtual ~Human()
 	{
+		count--;
 		cout << "HDestructor:\t" << this << endl;
 	}
 	//				Methods
 	virtual std::ostream& info(std::ostream& os)const //Base class
 	{
-		return os << last_name << "," << first_name << "," << age;
+		os.width(TYPE_WIDTH); //Метод width(N) задает размер поля, в которое будет выведено значение
+		os << std::left;
+		os << std::string(strchr(typeid(*this).name(), ' ') + 1) + ":"; // strchr(const char* str, char symbol); в указанной строке (str) находит
+		//указанный символ (symbol) и возвращает указатель на найденный символ или 'nullptr'
+		//если указанный символ отсутствует в указанной строке
+		//return os << last_name << "," << first_name << "," << age;
+		os.width(NAME_WIDTH);
+		os << last_name;
+		os.width(NAME_WIDTH);
+		os << first_name;
+		os.width(AGE_WIDTH);
+		os << age;
+		return os;
 	}
 
 	virtual void print()const
@@ -66,6 +89,8 @@ public:
 		cout << last_name << " " << first_name << " " << age;
 	}
 };
+
+int Human::count = 0; //Инициализация статической переменной (относится к определению класса - class Definition)
 
 std::ostream& operator << (std::ostream & os, const Human & obj)
 {
@@ -78,6 +103,9 @@ std::ostream& operator << (std::ostream & os, const Human & obj)
 
 class Student :public Human
 {
+	static const int SPECIALITY_WIDTH = 32;
+	static const int GROUP_WIDTH = 8;
+	static const int RAT_WIDTH = 8;
 	std::string speciality;
 	std::string group;
 	double rating; //успеваемость
@@ -134,7 +162,17 @@ public:
 	//				Methods
 	std::ostream& info(std::ostream& os)const override //Derived Class
 	{
-		return Human::info(os) << "," << speciality << "," << group << "," << rating << "," << attendance;
+		//return Human::info(os) << " " << speciality << " " << group << " " << rating << " " << attendance;
+		Human::info(os);
+		os.width(SPECIALITY_WIDTH);
+		os << speciality;
+		os.width(GROUP_WIDTH);
+		os << group;
+		os.width(RAT_WIDTH);
+		os << rating;
+		os.width(RAT_WIDTH);
+		os << attendance;
+		return os;
 	}
 
 	void print()const override
@@ -150,6 +188,8 @@ public:
 
 class Teacher :public Human
 {
+	static const int SPECIALITY_WIDTH = 32;
+	static const int EXPERIENCE_WIDTH = 5;
 	std::string speciality;
 	int experience;
 public:
@@ -183,7 +223,13 @@ public:
 	}
 	std::ostream& info(std::ostream& os)const override //Derived Class
 	{
-		return Human::info(os) << "," << speciality << "," << experience;
+		//return Human::info(os) << " " << speciality << " " << experience;
+		Human::info(os);
+		os.width(SPECIALITY_WIDTH);
+		os << speciality;
+		os.width(EXPERIENCE_WIDTH);
+		os << experience;
+		return os;
 	}
 
 	void print()const override
@@ -253,7 +299,9 @@ public:
 	//					Methods
 	std::ostream& info(std::ostream& os)const override //Derived Class
 	{
-		return Student::info(os) << "," << supervisor << "," << topic << "," << grade << "," << subject;
+		return Student::info(os) << " " << supervisor << " " << topic << " " << grade << " " << subject;
+		
+
 	}
 
 	void print()const override
@@ -265,8 +313,8 @@ public:
 
 
 //#define INHERITANCE
-//#define POLYMORPHISM
-#define READ_FROM_FILE
+#define POLYMORPHISM
+//#define READ_FROM_FILE
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -302,6 +350,8 @@ void main()
 		fout << *group[i] << endl;
 		cout << delimiter << endl;
 	}
+	cout << "Количество объектов: " << group[0]->get_count() << endl;
+	cout << "Количество объектов: " << Human::get_count() << endl;
 	fout.close();
 	system("start notepad group.csv");
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)

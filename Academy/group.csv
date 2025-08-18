@@ -1,5 +1,5 @@
-Pinkman,Jessie,22,Chemistry,WW_220,95,98
-White,Walter,50,Chemistry,25
-Arny,GuessWhat,22,Physics,BB,99,99,IronMan,Sentinel,Bachelor,Physics
-Vercetty,Tommy,30,Theft,Vice,98,99
-Diaz,Ricardo,50,Weapons distribution,20
+Student:    Pinkman     Jessie      22   Chemistry                       WW_220  95      98      
+Teacher:    White       Walter      50   Chemistry                       25   
+Graduate:   Arny        GuessWhat   22   Physics                         BB      99      99       IronMan Sentinel Bachelor Physics
+Student:    Vercetty    Tommy       30   Theft                           Vice    98      99      
+Teacher:    Diaz        Ricardo     50   Weapons distribution            20   
