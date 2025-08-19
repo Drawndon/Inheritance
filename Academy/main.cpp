@@ -363,6 +363,18 @@ Human** Load(const std::string& filename, int& n)
 		fin.seekg(0); // Метод seekg(n) переводит Get-курсор (на чтение) в указанную позицию, которая 'n';
 		cout << "Position " << fin.tellg() << endl; //Метод tellg() возвращает текущую Get-позицию курсора на чтение. -1 конец файла
 
+		for (int i = 0; i < n; i++)
+		{
+			std::getline(fin, buffer, ':');
+			//cout << buffer << endl;
+			if (std::strcmp("Human", buffer.c_str()) == 0) group[i] = new Human("", "", 0);
+			if (std::strcmp("Student", buffer.c_str()) == 0) group[i] = new Student("", "", 0, "", "", 0, 0);
+			if (std::strcmp("Graduate", buffer.c_str()) == 0) group[i] = new Graduate("", "", 0, "", "", 0, 0, "", "", "", "");
+			if (std::strcmp("Teacher", buffer.c_str()) == 0) group[i] = new Teacher("", "", 0, "", 0);
+			std::getline(fin, buffer);
+			//cout << *group[i];
+		}
+
 
 
 	}
