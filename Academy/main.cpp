@@ -368,9 +368,9 @@ Human** Load(const std::string& filename, int& n)
 			std::getline(fin, buffer, ':');
 			//cout << buffer << endl;
 			if (std::strcmp("Human", buffer.c_str()) == 0) group[i] = new Human("", "", 0);
-			if (std::strcmp("Student", buffer.c_str()) == 0) group[i] = new Student("", "", 0, "", "", 0, 0);
-			if (std::strcmp("Graduate", buffer.c_str()) == 0) group[i] = new Graduate("", "", 0, "", "", 0, 0, "", "", "", "");
-			if (std::strcmp("Teacher", buffer.c_str()) == 0) group[i] = new Teacher("", "", 0, "", 0);
+			else if (std::strcmp("Student", buffer.c_str()) == 0) group[i] = new Student("", "", 0, "", "", 0, 0);
+			else if (std::strcmp("Graduate", buffer.c_str()) == 0) group[i] = new Graduate("", "", 0, "", "", 0, 0, "", "", "", "");
+			else if (std::strcmp("Teacher", buffer.c_str()) == 0) group[i] = new Teacher("", "", 0, "", 0);
 			std::getline(fin, buffer);
 			//cout << *group[i];
 		}
