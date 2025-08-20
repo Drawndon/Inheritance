@@ -84,6 +84,11 @@ public:
 		return os;
 	}
 
+	virtual std::istream& scan(std::istream& is)
+	{
+		return is >> last_name >> first_name >> age;
+	}
+
 	virtual void print()const
 	{
 		cout << last_name << " " << first_name << " " << age;
@@ -95,6 +100,11 @@ int Human::count = 0; //Инициализация статической пер
 std::ostream& operator << (std::ostream & os, const Human & obj)
 {
 	return obj.info(os);
+}
+
+std::istream& operator>>(std::istream& is, Human& obj)
+{
+	return obj.scan(is);
 }
 
 #define STUDENT_TAKE_PARAMETERS const std::string& speciality, const std::string& group, double rating, double attendance
@@ -175,6 +185,28 @@ public:
 		return os;
 	}
 
+	std::istream& scan(std::istream& is) override
+	{
+		Human::scan(is);
+		char sz_buffer[SPECIALITY_WIDTH + 1] = {};
+		is.read(sz_buffer, SPECIALITY_WIDTH); //fin.read() читает заданное количество символов из файла и сохраняет
+												//их в NTL (NULL-Terminated Line);
+		//Удаляем лишние пробелы в конце прочитанной строки:
+		for (int i = SPECIALITY_WIDTH - 1; sz_buffer[i] == ' '; i--)
+		{
+			sz_buffer[i] = 0;
+		}
+		//Удаляем лишние пробелы в начале прочитанной строки:
+		while (sz_buffer[0] == ' ')
+			for (int i = 0; sz_buffer[i]; i++) sz_buffer[i] = sz_buffer[i + 1];
+
+		speciality = sz_buffer; //Сохраняем специальность в соответствующее поле
+		is >> group >> rating >> attendance;
+		return is;
+	}
+
+
+
 	void print()const override
 	{
 		Human::print();
@@ -232,6 +264,26 @@ public:
 		return os;
 	}
 
+	std::istream& scan(std::istream& is) override
+	{
+		Human::scan(is);
+		char sz_buffer[SPECIALITY_WIDTH + 1] = {};
+		is.read(sz_buffer, SPECIALITY_WIDTH); //fin.read() читает заданное количество символов из файла и сохраняет
+												//их в NTL (NULL-Terminated Line);
+		//Удаляем лишние пробелы в конце прочитанной строки:
+		for (int i = SPECIALITY_WIDTH - 1; sz_buffer[i] == ' '; i--)
+		{
+			sz_buffer[i] = 0;
+		}
+		//Удаляем лишние пробелы в начале прочитанной строки:
+		while (sz_buffer[0] == ' ')
+			for (int i = 0; sz_buffer[i]; i++) sz_buffer[i] = sz_buffer[i + 1];
+
+		speciality = sz_buffer; //Сохраняем специальность в соответствующее поле
+		is >> experience;
+		return is;
+	}
+
 	void print()const override
 	{
 		Human::print();
@@ -239,44 +291,19 @@ public:
 	}
 };
 
-#define GRADUATE_TAKE_PARAMETERS const std::string & supervisor, const std::string& topic, const std::string& grade, const std::string& subject
-#define GRADUATE_GIVE_PARAMETERS supervisor, topic, grade, subject
+#define GRADUATE_TAKE_PARAMETERS const std::string& subject
+#define GRADUATE_GIVE_PARAMETERS subject
 
 class Graduate :public Student
 {
-	std::string supervisor;
-	std::string topic;
-	std::string grade;
 	std::string subject;
 public:
-	const std::string& get_supervisor()const
-	{
-		return supervisor;
-	}
-	const std::string& get_topic()const
-	{
-		return topic;
-	}
-	const std::string& get_grade()const
-	{
-		return grade;
-	}
+	
 	const std::string& get_subject() const
 	{
 		return subject;
 	}
-	void set_supervisor(const std::string& supervisor)
-	{
-		this->supervisor = supervisor;
-	}
-	void set_topic(const std::string& topic)
-	{
-		this->topic = topic;
-	}
-	void set_grade(const std::string& grade)
-	{
-		this->grade = grade;
-	}
+	
 	void set_subject(const std::string& subject)
 	{
 		this->subject = subject;
@@ -286,9 +313,6 @@ public:
 	Graduate(HUMAN_TAKE_PARAMETERS, STUDENT_TAKE_PARAMETERS, GRADUATE_TAKE_PARAMETERS)
 		:Student(HUMAN_GIVE_PARAMETERS, STUDENT_GIVE_PARAMETERS)
 	{
-		set_supervisor(supervisor);
-		set_topic(topic);
-		set_grade(grade);
 		set_subject(subject);
 		cout << "GConstructor:\t" << this << endl;
 	}
@@ -299,15 +323,22 @@ public:
 	//					Methods
 	std::ostream& info(std::ostream& os)const override //Derived Class
 	{
-		return Student::info(os) << " " << supervisor << " " << topic << " " << grade << " " << subject;
+		return Student::info(os) << " " << subject;
 		
 
+	}
+
+	std::istream& scan(std::istream& is) override
+	{
+		Student::scan(is);
+		std::getline(is, subject);
+		return is;
 	}
 
 	void print()const override
 	{
 		Student::print();
-		cout << " " << supervisor << " " << topic << " " << grade << " " << subject;
+		cout << " " << subject;
 	}
 };
 
@@ -337,6 +368,17 @@ void Save(Human* group[], const int n, const std::string& filename)
 	system(cmd.c_str()); // Метод c_str возвращает строку в виде массива символов (char* );
 }
 
+Human* HumanFactory(const std::string& type)
+{
+	Human* human = nullptr;
+	if (strstr(type.c_str(),"Human")) human = new Human("", "", 0);
+	else if (strstr(type.c_str(), "Student")) human = new Student("", "", 0, "", "", 0, 0);
+	else if (strstr(type.c_str(), "Graduate")) human = new Graduate("", "", 0, "", "", 0, 0, "");
+	else if (strstr(type.c_str(), "Teacher")) human = new Teacher("", "", 0, "", 0);
+
+	return human;
+}
+
 Human** Load(const std::string& filename, int& n)
 {
 	Human** group = nullptr;
@@ -363,6 +405,16 @@ Human** Load(const std::string& filename, int& n)
 		fin.seekg(0); // Метод seekg(n) переводит Get-курсор (на чтение) в указанную позицию, которая 'n';
 		cout << "Position " << fin.tellg() << endl; //Метод tellg() возвращает текущую Get-позицию курсора на чтение. -1 конец файла
 
+		//4) Загружаем объекты из файла:
+		for (int i = 0; !fin.eof();)
+		{
+			std::string buffer;
+			std::getline(fin, buffer, ':');
+			if (buffer.size() < 5) continue;
+			group[i] = HumanFactory(buffer);
+			fin >> *group[i];
+			i++;
+		}
 
 
 	}
@@ -390,6 +442,7 @@ void Clear(Human* group[], const int n)
 //#define INHERITANCE
 //#define POLYMORPHISM
 //#define READ_FROM_FILE
+#define LOAD_FROM_FILE
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -413,7 +466,7 @@ void main()
 	{
 		new Student("Pinkman", "Jessie", 22, "Chemistry", "WW_220", 95, 98),
 		new Teacher("White", "Walter", 50, "Chemistry", 25),
-		new Graduate("Arny", "GuessWhat", 22, "Physics", "BB", 99, 99, "IronMan", "Sentinel", "Bachelor", "Physics"),
+		new Graduate("Arny", "GuessWhat", 22, "Physics", "BB", 99, 99, "IronMan"),
 		new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 98, 99),
 		new Teacher("Diaz", "Ricardo", 50, "Weapons distribution", 20)
 	};
@@ -429,10 +482,14 @@ void main()
 	}
 #endif // POLYMORPHISM
 
+#ifdef LOAD_FROM_FILE
+
+
 	int n = 0;
 	Human** group = Load("group.txt", n);
 	Print(group, n);
 	Clear(group, n);
+#endif // LOAD_FROM_FILE
 
 #ifdef READ_FROM_FILE
 	std::ifstream fin("group.csv");
