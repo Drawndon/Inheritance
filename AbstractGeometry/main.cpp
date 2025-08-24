@@ -1,6 +1,8 @@
 ﻿#include <iostream>
 using namespace std;
 
+#define PI 3.14159265358979323846
+
 enum Color
 {
 	Red = 0x000000FF,
@@ -29,63 +31,133 @@ public:
 
 };
 
-class Square :public Shape
+class Rectangle :public Shape
 {
-	double side;
+	double length;
+	double width;
 public:
-	Square(double side, Color color) :Shape(color)
+	Rectangle(double length, double width, Color color) :Shape(color)
 	{
-		set_side(side);
+		set_length(length);
+		set_width(width);
 	}
-	double get_side()const
+	double get_length()const
 	{
-		return side;
+		return length;
 	}
-	void set_side(double side)
+	double get_width()const
 	{
-		this->side = side;
+		return width;
+	}
+	void set_length(double length)
+	{
+		this->length = length;
+	}
+	void set_width(double width)
+	{
+		this->width = width;
 	}
 	double get_area()const override
 	{
-		return side * side;
+		return length * width;
 	}
 	double get_perimeter()const override
 	{
-		return 4 * side;
+		return 2 * (length + width);
 	}
 	void draw()const override
 	{
-		for (int i = 0; i < side; i++)
+		for (int i = 0; i < width; i++)
 		{
-			for (int j = 0; j < side; j++)
+			for (int j = 0; j < length; j++)
 			{
 				cout << "* ";
 			}
 			cout << endl;
 		}
-		cout << endl;
 	}
 
 	void info()const override
 	{
 		cout << typeid(*this).name() << endl;
-		cout << "Длина стороны квадрата: " << get_side() << endl;
+		cout << "Длина прямоугольника: " << get_length() << endl;
+		cout << "Ширина прямоугольника: " << get_width() << endl;
 		Shape::info();
 	}
+
+};
+
+class Square :public Rectangle
+{
+	double side;
+public:
+	Square(double side, Color color) :Rectangle(side, side, color) {}
+};
+
+class Circle : public Shape
+{
+	int radius;
+public:
+	Circle(int radius, Color color) :Shape(color)
+	{
+		set_radius(radius);
+	}
+	int get_radius()const
+	{
+		return radius;
+	}
+	void set_radius(int radius)
+	{
+		this->radius = radius;
+	}
+	double get_area()const override
+	{
+		return PI * pow(get_radius(), 2);
+	}
+	double get_perimeter()const override
+	{
+		return 2 * PI * radius;
+	}
+
+	void draw()const override
+	{
+		for (int y = radius; y >= -radius; y--) {
+			for (int x = -radius; x <= radius; x++) {
+				if (round(sqrt(x * x + y * y)) == radius) cout << "*";
+				else cout << " ";
+			}
+			cout << endl;
+		}
+	}
+
+	void info()const override
+	{
+		cout << typeid(*this).name() << endl;
+		cout << "Радиус круга: " << get_radius() << endl;
+		Shape::info();
+	}
+
 };
 
 void main()
 {
 	setlocale(LC_ALL, "");
-	cout << hex << Color::SomeColor << endl; // Ничего не присвоили будет на 1 больше чем предыдущего (то есть White)
+	//cout << hex << Color::SomeColor << endl; // Ничего не присвоили будет на 1 больше чем предыдущего (то есть White)
 	//Shape shape(Color::Red);
 
 	Square square(5, Color::Red);
-	cout << "Длина стороны квадрата: " << square.get_side() << endl;
-	cout << "Площадь квадрата: " << square.get_area() << endl;
-	cout << "Периметр квадрата: " << square.get_perimeter() << endl;
 	square.draw();
 	cout << "\n-----------------------------------------------\n" << endl;
 	square.info();
+
+	Circle cir(5, Color::Green);
+	//cir.draw();
+	cout << "\n-----------------------------------------------\n" << endl;
+	cir.info();
+
+	Rectangle rect(10, 4, Color::Yellow);
+	rect.draw();
+	cout << "\n-----------------------------------------------\n" << endl;
+	rect.info();
 
 }
