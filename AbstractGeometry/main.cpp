@@ -14,6 +14,59 @@ enum Color
 	SomeColor // Ничего не присвоили будет на 1 больше предыдущего
 };
 
+class Point
+{
+	double x;
+	double y;
+public:
+	double get_x()const
+	{
+		return x;
+	}
+	double get_y()const
+	{
+		return y;
+	}
+	void set_x(double x)
+	{
+		this->x = x;
+	}
+	void set_y(double y)
+	{
+		this->y = y;
+	}
+
+	// Constructors
+
+	Point(double x = 0, double y = 0)
+	{
+		this->x = x;
+		this->y = y;
+
+	}
+	Point(const Point& other)
+	{
+		this->x = other.x;
+		this->y = other.y;
+	}
+
+
+	// Methods
+	double distance(const Point& other)const
+	{
+		//other.x *= 100 // E0137
+		//this->x *= 100 // E0137
+		double x_diff = this->get_x() - other.get_x();
+		double y_diff = this->get_y() - other.get_y();
+		return sqrt(x_diff * x_diff + y_diff * y_diff);
+	}
+	void print()const
+	{
+		cout << typeid(*this).name() << ": x = " << x << ",\ty = " << y << endl;
+	}
+};
+
+
 class Shape
 {
 	Color color;
@@ -89,9 +142,65 @@ public:
 
 class Square :public Rectangle
 {
-	double side;
 public:
 	Square(double side, Color color) :Rectangle(side, side, color) {}
+};
+
+class Triangle :public Shape
+{
+	Point A, B, C;
+public:
+	Triangle(Point A, Point B, Point C, Color color) : Shape(color)
+	{
+		set_A(A);
+		set_B(B);
+		set_C(C);
+	}
+	Point get_A()const
+	{
+		return A;
+	}
+	Point get_B()const
+	{
+		return B;
+	}
+	Point get_C()const
+	{
+		return C;
+	}
+	void set_A(Point A)
+	{
+		this->A.set_x(A.get_x());
+		this->A.set_y(A.get_y());
+	}
+	void set_B(Point B)
+	{
+		this->B.set_x(B.get_x());
+		this->B.set_y(B.get_y());
+	}
+	void set_C(Point C)
+	{
+		this->C.set_x(C.get_x());
+		this->C.set_y(C.get_y());
+	}
+	double get_area()const override
+	{
+		return 0;
+	}
+	double get_perimeter()const override
+	{
+		return A.distance(B) + B.distance(C) + A.distance(C);
+	}
+	void draw()const override
+	{
+
+	}
+	void info()const override
+	{
+		cout << typeid(*this).name() << endl;
+		
+		Shape::info();
+	}
 };
 
 class Circle : public Shape
@@ -159,5 +268,10 @@ void main()
 	rect.draw();
 	cout << "\n-----------------------------------------------\n" << endl;
 	rect.info();
+
+	Triangle tr(Point(0, 0), Point(1, 1), Point(5, 7), Color::Orange);
+	tr.info();
+
+
 
 }
