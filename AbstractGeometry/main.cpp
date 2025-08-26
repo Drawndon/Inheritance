@@ -2,6 +2,8 @@
 #include <Windows.h>
 using namespace std;
 
+#define PI 3.14159265358979323846
+
 namespace Geometry	
 {
 	enum Color
@@ -208,6 +210,64 @@ namespace Geometry
 	public:
 		Square(int side, SHAPE_TAKE_PARAMETERS):Rectangle(side, side, SHAPE_GIVE_PARAMETERS) {}
 	};
+
+	class Circle :public Shape
+	{
+		double radius;
+	public:
+		Circle(double radius, SHAPE_TAKE_PARAMETERS) :Shape(SHAPE_GIVE_PARAMETERS)
+		{
+			set_radius(radius);
+		}
+		void set_radius(double radius)
+		{
+			radius <= 0 ? radius = 10 : radius;
+			this->radius = radius;
+		}
+		double get_radius()const
+		{
+			return radius;
+		}
+		double get_area()const
+		{
+			return PI * radius * radius;
+		}
+		double get_perimeter()const
+		{
+			return 2 * PI * radius;
+		}
+		void draw()const override
+		{
+			//1 Получаем окно консоли: GetConsoleWindow()
+			HWND hwnd = GetDesktopWindow(); // Рабочего стола
+			//2 Получаем контекст устройства (DC - Device Context) для окна консоли:
+			HDC hdc = GetDC(hwnd); //DC - это то, на чем мы будем рисовать
+
+			//3 Создадим инструменты, которыми мы будем рисовать:
+			HPEN hPen = CreatePen(PS_SOLID, line_width, color); //Карандаш (Pen) рисует контур фигуры.
+			HBRUSH hBrush = CreateSolidBrush(color); //Кисть (Brush) рисует заливку фигуры
+
+			//4 Выберем созданные инструменты
+			SelectObject(hdc, hPen);
+			SelectObject(hdc, hBrush);
+
+			//5 После того, как все необходимые инструменты созданы и выбраны, можно рисовать
+			::Ellipse(hdc, start_x, start_y, start_x + 2 * radius, start_y + 2 * radius);
+
+			//6 hdc, hPen и hBrush занимают ресурсы, а ресурсы нужно освобождать:
+			DeleteObject(hPen);
+			DeleteObject(hBrush);
+			ReleaseDC(hwnd, hdc);
+
+		}
+		void info()const override
+		{
+			cout << typeid(*this).name() << endl;
+			cout << "Радиус: " << radius << endl;
+			Shape::info();
+		}
+
+	};
 }
 
 void main()
@@ -226,9 +286,13 @@ void main()
 
 	Geometry::Rectangle rect(150, 100, 550, 100, 2, Geometry::Color::Orange);
 	rect.info();
+
+	Geometry::Circle circ(20, 150, 250, 2, Geometry::Color::Green);
+	circ.info();
 	while (true) //Чтобы не исчезал при перерисовке
 	{
 		square.draw();
 		rect.draw();
+		circ.draw();
 	}
 }
